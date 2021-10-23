@@ -56,13 +56,18 @@ object Main {
     val spark = SparkSession.builder.appName("Java Spark").config("spark.master", "local").getOrCreate
     val filesRead = spark.read.json(fileOutputName)
 
-    filesRead.printSchema()
+    var isUserModeActive = true;
+    while (isUserModeActive) {
+      filesRead.printSchema()
 
-    print("Enter the parameter for grouping: ")
+      print("Enter the parameter for grouping: ")
+      val parameterStr = readLine()
 
-    val parameterStr = readLine()
+      filesRead.groupBy(parameterStr).count().show()
 
-    filesRead.groupBy(parameterStr).count().show()
+      println("To continue, enter 'continue'")
+      isUserModeActive = "continue" == readLine()
+    }
 
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
