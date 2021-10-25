@@ -6,7 +6,10 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import com.google.gson.{Gson, JsonArray, JsonParser}
+import org.apache.hadoop.fs.LocalFileSystem
+import org.apache.hadoop.hdfs.DistributedFileSystem
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.{SparkConf, SparkContext}
 
 import java.io.FileWriter
 import java.time.LocalDate
@@ -53,7 +56,11 @@ object Main {
     fileWrite.flush()
     fileWrite.close()
 
-    val spark = SparkSession.builder.appName("Java Spark").config("spark.master", "local").getOrCreate
+    val conf = new SparkConf()
+    conf.set("fs.hdfs.impl", classOf[DistributedFileSystem].getName)
+    conf.set("fs.file.impl", classOf[LocalFileSystem].getName)
+
+    val spark = SparkSession.builder.config(conf).appName("Java Spark").config("spark.master", "local").getOrCreate
     val filesRead = spark.read.json(fileOutputName)
 
     var isUserModeActive = true;

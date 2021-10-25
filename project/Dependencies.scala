@@ -25,6 +25,6 @@ object Dependencies {
   }
 
   object Other {
-    val gson = "com.google.code.gson" % "gson" % "2.8.2"
+    val gson = "com.google.code.gson" % "gson" % "2.8.6"
   }
 }
